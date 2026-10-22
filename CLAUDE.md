@@ -108,6 +108,7 @@ A defect found later flows back as a ticket to the owning module (UPSTREAM.md in
 
 ## Safety
 - Never read or write ~/.claude. Never read .env files, tokens or certificates (component selector credentials).
+- Network, TLS or certificate errors (e.g. CERTIFICATE_VERIFY_FAILED): stop and ask the engineer. Never read, list or export the OS certificate store, never build or edit CA bundle files, never set REQUESTS_CA_BUNDLE / SSL_CERT_FILE / CURL_CA_BUNDLE (process, user or machine level), never disable TLS verification (verify=False, -k, CERT_NONE). A fix that changes how the machine trusts certificates is the engineer's decision.
 - Never tag, commit --amend, reset --hard, checkout . or clean. Never delete files; cleanups built into tools are the only exception.
 - Module sessions never commit or push. Only a session started in the pipeline root commits and pushes, only on a coordinator
   ticket: git status shown first, explicit paths, exact message, and the engineer's separate go for the commit and for the push.

@@ -20,6 +20,12 @@ Usage (imported):
     candidates = search_component(ref, component_spec)
 """
 
+try:
+    import truststore
+    truststore.inject_into_ssl()
+except ImportError:
+    pass
+
 import os
 import sys
 import json

@@ -1,5 +1,5 @@
 # T008 - sim/scratch ignore ve ikinci commit
-Durum: ÇALIŞIYOR
+Durum: BİTTİ
 ## İstek
 Goal: ignore the temporary 02_simulasyon\sim\scratch folder, then make a second small commit with the leftover ticket results and HANDOFF changes, and push it. Run this session from the pipeline root C:\pipelines\akim_dongusu_4_20ma. Edit only: this ticket file and <pipeline>\.gitignore. Allowed git write commands: `git add` with explicit file paths, one `git commit`, `git push`. Never tag / amend / reset / checkout . / clean / force-push / delete. Never read or print tokens or credential files.
 Steps (STOP = wait for the engineer's reply):
@@ -18,4 +18,9 @@ Output: table of at most 6 lines (step | done | value), then at most 3 lines of 
 
 Önerilen add listesi (8 yol, T009 sonrası SPEC.md eklendi): `.gitignore`, `00_coordination/HANDOFF.md`, `00_coordination/SPEC.md`, `00_coordination/docs/DECISIONS.md`, `00_coordination/docs/tasks/T005-ilk-commit.md`, `00_coordination/docs/tasks/T007-remote-push.md`, `00_coordination/docs/tasks/T008-ikinci-commit.md`, `00_coordination/docs/tasks/T009-spec-onay.md`.
 
-Açık: mühendisin "commit go" cevabı bekleniyor.
+| 4 commit | evet | 2dae4a4 "Bilet sonuclari, HANDOFF, sim/scratch ignore", 8 dosya, +74/-9 (commit sonrası bu bilet dosyasına eklenen sonuç satırları commit dışı kalır) |
+
+| 5 push | evet | `git push` başarılı, e8c9b0f..2dae4a4 main -> main; origin/main = HEAD = 2dae4a4 |
+| 5 status | evet | kalan: M T008 bileti (commit sonrası yazılan sonuç satırları, commit edilmedi) |
+
+Açık: T008 bilet dosyasındaki son değişiklik ayrı bir commit bekliyor (istenirse sonraki biletle).

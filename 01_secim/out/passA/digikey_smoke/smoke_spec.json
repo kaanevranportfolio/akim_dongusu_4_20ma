@@ -1,0 +1,5 @@
+{
+  "_comment": "Throwaway smoke-test input (01_secim/T001-digikey-smoke). Generic keywords only, no MPN. Not a component_specs.json: search_component() has no IC type, so smoke_run.py reuses KeywordRequest + _normalise_product from search_digikey.py.",
+  "query": "loop-powered 4-20 mA transmitter IC",
+  "limit": 15
+}

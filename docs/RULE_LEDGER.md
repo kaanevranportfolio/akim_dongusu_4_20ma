@@ -53,6 +53,7 @@ Olay sütunu: kaynak dosyada yazılı olay; "kayıtta yok" = olay bulunamadı (k
 | 46 | Pin kimliği: PINMAP, ASCII büyük harf alias, <PARÇA>_<PİN>, yalnız harf farkıyla ayrışan ad yok | YÜK KCAD | QSPICE düğüm adları harf duyarsız (naming canary) | 01_secim/02_simulasyon/03_kicad CLAUDE.md | Modül dosyalarında |
 | 47 | KiCad kapıları: ERC, netlist=upstream, footprint [V]; DRC, BOM, mühendis go | KCAD | kayıtta yok | 03_kicad/CLAUDE.md | |
 | 48 | Her aralık nominal mi en kötü durum mu söylenir | lessons (pratik, kural değil) | L1 penceresi nominal sanıldı; E12 DCM cümlesi | docs\INTERFACES.md (stress table) | Kural olarak kökte değil |
+| 49 | Ağ/TLS/sertifika hatasında dur ve mühendise sor; sertifika deposu okunmaz/dışa aktarılmaz, CA paketi üretilmez, REQUESTS_CA_BUNDLE/SSL_CERT_FILE/CURL_CA_BUNDLE ayarlanmaz, TLS doğrulaması kapatılmaz | YENİ | 2026-10-22 01_secim/T001: DigiKey OAuth CERTIFICATE_VERIFY_FAILED; ajan pip-system-certs denedi (truststore çakışması), Windows ROOT/CA deposundan 53 kök sertifikayı dışa aktarıp certifi ile birleştirdi (bilet dışı); doğrulama kapatılmadı | CLAUDE.md Safety | Neden (ortam farkı mı, ağda TLS denetimi mi) kanıtlanmadı [A]; tanı 00_coordination/T010. vscode-ticket skill'ine aynı cümle (claude.ai tarafı) |
 
 ## Bilerek düşenler
 - `/brief`, supervisor_brief.md, SUPERVISOR DECISIONS bloğu (METHODOLOGY_v2 rolleri): eski Supervisor modeli; yerine planner + bilet + HANDOFF.
