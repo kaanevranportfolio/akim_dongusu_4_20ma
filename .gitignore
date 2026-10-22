@@ -30,3 +30,8 @@ _autosave-*
 .env
 .digikey_cache/
 tools/component_selector/*.log
+
+# 01_secim raw vendor responses and run logs (reports, smoke_run.py, smoke_spec.json stay tracked)
+01_secim/out/**/result*.json
+01_secim/out/**/run.log
+01_secim/out/**/*.tmp

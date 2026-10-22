@@ -50,7 +50,7 @@ def load_fixtures():
     if not os.path.exists(FIXTURES_DIR):
         return fixtures
     for filename in sorted(os.listdir(FIXTURES_DIR)):
-        if filename.endswith(".json"):
+        if filename.endswith(".json") and not filename.startswith("digikey_v4_"):
             path = os.path.join(FIXTURES_DIR, filename)
             with open(path, encoding="utf-8") as f:
                 data = json.load(f)

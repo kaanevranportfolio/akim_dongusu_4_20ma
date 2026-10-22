@@ -1,5 +1,5 @@
 # T014 - TLS düzeltmesi commit ve push
-Durum: ÇALIŞIYOR
+Durum: BİTTİ
 ## İstek
 Goal: commit and push the TLS-fix work as one commit. Run only after 00_coordination/T011 is BİTTİ. Run this session from the pipeline root C:\pipelines\akim_dongusu_4_20ma. Edit only this ticket file. Allowed git write commands: `git add` with explicit file paths, one `git commit`, `git push`. Never tag / amend / reset / checkout . / clean / force-push / delete. Never read or print .env, tokens or credential files.
 Steps (STOP = wait for the engineer's reply):
@@ -16,8 +16,8 @@ Output: table of at most 6 lines (step | done | value), then at most 3 lines of 
 | 1 Salt okuma | evet | main; origin https://github.com/kaanevranportfolio/akim_dongusu_4_20ma.git; kaanevranportfolio / kaanevran@hotmail.com (beklenenle aynı); son commit 2dae4a4 |
 | 2 Hijyen | UYARI | .env ignore'da (tools/component_selector/.gitignore:1). `01_secim/out/passA/digikey_smoke/run.log` listede: `*.log` kuralına takılıyor → eklenmeyecek, mühendis karar versin (404 bayt) |
 | 3 Önerilen add listesi | evet, onay bekliyor | 20 yol, toplam 108333 bayt (hepsi <1 MB); .pem/.pdf/.qraw/__pycache__/.env yok |
-| 4 Commit | YAPILMADI | "commit go" bekleniyor |
-| 5 Push | YAPILMADI | ayrı "push go" bekleniyor |
+| 4 Commit | evet (commit go alındı) | 8243d58, 20 dosya, 348 ekleme / 9 silme; liste güncellendi: DECISIONS.md ve T015 dahil, T001/T002/smoke_run.py/smoke_spec.json dahil, result.json + run.log + 01_secim T003 HARİÇ (izlenmeden kaldı). Bu bilet commit'e önceki hâliyle girdi; bu satır sonradan yazıldı, çalışma ağacında değişik görünür |
+| 5 Push | evet (push go alındı) | 2dae4a4..8243d58 main -> main; `git log origin/main --oneline -1` = 8243d58 = HEAD. `git status --short`: M T014 (bu bilet, sonradan yazılan satırlar) + izlenmeyen T003, result.json, run.log |
 
 Add listesi (tek tek yol): CLAUDE.md; docs/RULE_LEDGER.md; tools/component_selector/{requirements.txt, README.md, search_digikey.py, search_nexar.py}; 00_coordination/HANDOFF.md; 00_coordination/docs/lessons.md; 00_coordination/docs/tasks/{T008-ikinci-commit, T010-tls-tani, T011-sertifika-kurali, T012-truststore, T013-truststore-dogrulama, T014-ucuncu-commit}.md.
 Beklenenin DIŞINDA (işaretli, mühendis karar versin): 01_secim/docs/tasks/T001-digikey-smoke.md, 01_secim/docs/tasks/T002-smoke-truststore.md, 01_secim/out/passA/digikey_smoke/{smoke_run.py, smoke_spec.json, result.json}; run.log hariç tutulacak.

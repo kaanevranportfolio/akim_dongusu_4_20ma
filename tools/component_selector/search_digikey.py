@@ -8,8 +8,8 @@ Returns normalised candidate list — same format as search_nexar.py.
 No derating logic here. Never fabricates data.
 
 Auth note:
-    First run will open a browser for OAuth2 login — one time only.
-    Token is cached in .digikey_cache/ and auto-refreshed thereafter.
+    2-legged OAuth (client credentials) via digikey_v4.py. No browser login.
+    Token is kept in memory only; no token file, no .digikey_cache needed.
 
 Usage (standalone test):
     python search_digikey.py
@@ -30,10 +30,9 @@ import os
 import sys
 import json
 import logging
-from pathlib import Path
 
 # ---------------------------------------------------------------------------
-# ENV SETUP — must happen before digikey import
+# ENV SETUP
 # ---------------------------------------------------------------------------
 
 try:
@@ -42,28 +41,9 @@ try:
 except ImportError:
     pass
 
-# DigiKey library reads these from environment
 _BASE = os.path.dirname(os.path.abspath(__file__))
 
-os.environ["DIGIKEY_CLIENT_ID"]     = os.getenv("DIGIKEY_CLIENT_ID", "")
-os.environ["DIGIKEY_CLIENT_SECRET"] = os.getenv("DIGIKEY_CLIENT_SECRET", "")
-os.environ["DIGIKEY_CLIENT_SANDBOX"] = "False"
-os.environ["DIGIKEY_STORAGE_PATH"]  = str(Path(_BASE) / ".digikey_cache")
-
-# Ensure cache directory exists
-Path(os.environ["DIGIKEY_STORAGE_PATH"]).mkdir(exist_ok=True)
-
-# ---------------------------------------------------------------------------
-# DEPENDENCY CHECK
-# ---------------------------------------------------------------------------
-
-try:
-    import digikey
-    from digikey.v4.productinformation import KeywordRequest
-except ImportError:
-    print("ERROR: DigiKey library not installed.")
-    print("Fix:   pip install git+https://github.com/hurricaneJoef/digikey-api.git")
-    sys.exit(1)
+import digikey_v4   # direct Product Information V4 HTTP client (requests only)
 
 # ---------------------------------------------------------------------------
 # LOGGER
@@ -353,91 +333,70 @@ def _parse_parameters(params: list) -> dict:
 # NORMALISER — convert DigiKey product to our candidate dict
 # ---------------------------------------------------------------------------
 
-def _normalise_product(product, component_type: str) -> dict:
+def _normalise_product(product: dict, component_type: str) -> dict:
     """
-    Convert a DigiKey v4 product object into a normalised candidate dict.
-    Attribute names confirmed from live API v4 debug output May 2026:
-        product.manufacturer          → object with .name
-        product.unit_price            → float (direct field)
-        product.product_status        → object/dict with .status / 'status'
-        product.description           → object with .detailed_description
-        product.product_variations    → list, [0].digi_key_product_number
-        product.parameters            → list of objects with .parameter_text / .value_text
-        product.quantity_available    → int
-        product.manufacturer_lead_weeks → str
-        product.datasheet_url         → str
-        product.product_url           → str
-        product.manufacturer_product_number → str
+    Convert a raw DigiKey Product Information V4 product (JSON dict, PascalCase keys)
+    into a normalised candidate dict. Field names: V4 Swagger (KeywordSearch, definition Product):
+        Manufacturer.Name, ManufacturerProductNumber, UnitPrice, QuantityAvailable,
+        ProductStatus.Status, Description.DetailedDescription / ProductDescription,
+        ProductVariations[].DigiKeyProductNumber, Parameters[].ParameterText / ValueText,
+        ManufacturerLeadWeeks, DatasheetUrl, ProductUrl.
+    A field missing in the response becomes None (or the existing "PARAMETER NOT AVAILABLE" text).
     """
+    product = product or {}
+
     # --- Parameters ---
-    raw_params = getattr(product, "parameters", []) or []
     params = _parse_parameters([
         {
-            "ParameterText": getattr(p, "parameter_text", ""),
-            "ValueText":     getattr(p, "value_text", "")
+            "ParameterText": p.get("ParameterText") or "",
+            "ValueText":     p.get("ValueText") or "",
         }
-        for p in raw_params
+        for p in (product.get("Parameters") or [])
     ])
 
-    # --- Price — direct float field in v4 ---
-    unit_price = getattr(product, "unit_price", None)
+    # --- Price ---
+    unit_price = product.get("UnitPrice")
     try:
         unit_price = float(unit_price) if unit_price is not None else None
     except (ValueError, TypeError):
         unit_price = None
 
     # --- Stock ---
-    stock = getattr(product, "quantity_available", 0) or 0
+    stock = product.get("QuantityAvailable") or 0
 
-    # --- DigiKey PN — inside product_variations[0] ---
-    variations = getattr(product, "product_variations", []) or []
-    digikey_pn = getattr(variations[0], "digi_key_product_number", None) if variations else None
+    # --- DigiKey PN — ProductVariations[0] ---
+    variations = product.get("ProductVariations") or []
+    digikey_pn = variations[0].get("DigiKeyProductNumber") if variations else None
 
     # --- Lead time ---
-    lead_weeks_raw = getattr(product, "manufacturer_lead_weeks", None)
+    lead_weeks_raw = product.get("ManufacturerLeadWeeks")
     try:
         lead_weeks = int(lead_weeks_raw) if lead_weeks_raw else None
     except (ValueError, TypeError):
         lead_weeks = None
 
-    # --- Lifecycle — product_status is object with .status or dict with 'status' ---
-    ps = getattr(product, "product_status", None)
-    if isinstance(ps, dict):
-        lifecycle = ps.get("status", None)
-    elif ps is not None:
-        lifecycle = getattr(ps, "status", None)
-    else:
-        lifecycle = None
+    # --- Lifecycle ---
+    lifecycle = (product.get("ProductStatus") or {}).get("Status")
 
-    # --- Description — object with .detailed_description ---
-    desc_obj = getattr(product, "description", None)
-    if desc_obj is None:
-        description = "PARAMETER NOT AVAILABLE"
-    elif isinstance(desc_obj, dict):
-        description = desc_obj.get("detailed_description") or desc_obj.get("product_description", "PARAMETER NOT AVAILABLE")
-    else:
-        description = (
-            getattr(desc_obj, "detailed_description", None) or
-            getattr(desc_obj, "product_description", "PARAMETER NOT AVAILABLE")
-        )
+    # --- Description ---
+    desc_obj = product.get("Description") or {}
+    description = (
+        desc_obj.get("DetailedDescription") or
+        desc_obj.get("ProductDescription") or
+        "PARAMETER NOT AVAILABLE"
+    )
 
-    # --- Manufacturer — object with .name ---
-    mfr_obj = getattr(product, "manufacturer", None)
-    if isinstance(mfr_obj, dict):
-        manufacturer = mfr_obj.get("name", "PARAMETER NOT AVAILABLE")
-    elif mfr_obj is not None:
-        manufacturer = getattr(mfr_obj, "name", "PARAMETER NOT AVAILABLE")
-    else:
-        manufacturer = "PARAMETER NOT AVAILABLE"
+    # --- Manufacturer ---
+    manufacturer = (product.get("Manufacturer") or {}).get("Name") or "PARAMETER NOT AVAILABLE"
 
     candidate = {
-        "mpn":            getattr(product, "manufacturer_product_number", "PARAMETER NOT AVAILABLE"),
+        "mpn":            product.get("ManufacturerProductNumber") or "PARAMETER NOT AVAILABLE",
         "manufacturer":   manufacturer,
         "description":    description,
         "lifecycle":      lifecycle,
-        "datasheet":      getattr(product, "datasheet_url", None),
+        "datasheet":      product.get("DatasheetUrl"),
         "digikey_pn":     digikey_pn,
-        "product_url":    getattr(product, "product_url", None),
+        "product_url":    product.get("ProductUrl"),
         "unit_price_usd": unit_price,
         "stock":          stock,
         "lead_time_weeks": lead_weeks,
@@ -518,12 +477,7 @@ def search_component(ref: str, spec: dict) -> list:
     log.info(f"  {ref} ({ctype}): searching — '{query_str}'")
 
     try:
-        request = KeywordRequest(
-            keywords=query_str,
-            limit=_RESULTS_LIMIT,
-            offset=0
-        )
-        result = digikey.keyword_search(body=request)
+        result = digikey_v4.keyword_search(query_str, limit=_RESULTS_LIMIT, offset=0)
     except Exception as e:
         log.error(f"  {ref}: DigiKey search failed — {e}")
         return []
@@ -532,7 +486,7 @@ def search_component(ref: str, spec: dict) -> list:
         log.warning(f"  {ref}: NO CANDIDATE FOUND — DigiKey returned None")
         return []
 
-    products = getattr(result, "products", []) or []
+    products = result.get("Products") or []
 
     if not products:
         log.warning(f"  {ref}: NO CANDIDATE FOUND — DigiKey returned 0 results for '{query_str}'")

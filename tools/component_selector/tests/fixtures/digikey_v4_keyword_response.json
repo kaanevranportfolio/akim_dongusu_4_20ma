@@ -1,0 +1,35 @@
+{
+  "_label": "[A] hand-written from the V4 Swagger field names (KeywordResponse/Product); NOT a real DigiKey response",
+  "Products": [
+    {
+      "Description": {"ProductDescription": "FIXED IND 4.7UH 3A 60MOHM", "DetailedDescription": "4.7 uH Shielded Wirewound Inductor 3A 60mOhm Max"},
+      "Manufacturer": {"Id": 1, "Name": "Example Maker"},
+      "ManufacturerProductNumber": "EX-L-4R7",
+      "UnitPrice": 0.42,
+      "ProductUrl": "https://www.digikey.com/en/products/detail/example/EX-L-4R7/0",
+      "DatasheetUrl": "https://example.invalid/ex-l-4r7.pdf",
+      "QuantityAvailable": 1200,
+      "ProductStatus": {"Id": 0, "Status": "Active"},
+      "ManufacturerLeadWeeks": "12",
+      "ProductVariations": [
+        {"DigiKeyProductNumber": "EX-L-4R7CT-ND", "MinimumOrderQuantity": 1},
+        {"DigiKeyProductNumber": "EX-L-4R7TR-ND", "MinimumOrderQuantity": 1000}
+      ],
+      "Parameters": [
+        {"ParameterId": 2, "ParameterText": "Inductance", "ParameterType": "UnitOfMeasure", "ValueText": "4.7 µH"},
+        {"ParameterId": 3, "ParameterText": "Current Rating (Amps)", "ParameterType": "UnitOfMeasure", "ValueText": "3 A"},
+        {"ParameterId": 4, "ParameterText": "Current - Saturation (Isat)", "ParameterType": "UnitOfMeasure", "ValueText": "3.5 A"},
+        {"ParameterId": 5, "ParameterText": "DC Resistance (DCR)", "ParameterType": "UnitOfMeasure", "ValueText": "60mOhm Max"},
+        {"ParameterId": 6, "ParameterText": "Shielding", "ParameterType": "String", "ValueText": "Shielded"}
+      ]
+    },
+    {
+      "Manufacturer": {"Id": 2, "Name": "Other Maker"},
+      "ManufacturerProductNumber": "OT-0001",
+      "UnitPrice": null,
+      "ProductVariations": [],
+      "Parameters": []
+    }
+  ],
+  "ProductsCount": 2
+}
