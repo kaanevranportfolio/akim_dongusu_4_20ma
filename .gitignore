@@ -13,6 +13,7 @@ __pycache__/
 *.partial.pdf
 **/sim/out/*.raw
 **/sim/out/*.log
+02_simulasyon/sim/scratch/
 
 # Generated PDFs (sources: md, .py, svg, crops are versioned)
 **/docs/*.pdf

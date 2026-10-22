@@ -4,7 +4,7 @@
 |---|---|
 | **Sürüm** | v0.2 |
 | **Tarih** | 2026-10-22 |
-| **Durum** | Taslak, mühendis onayı bekliyor |
+| **Durum** | Onaylı (mühendis, 2026-10-22); Bölüm 8 açık soruları 01_secim A'da teyit edilir |
 | **Sahibi** | 00_coordination (koordinatör) |
 
 > **Gösterim:** Sonunda **[A]** olan değerler varsayımdır, onaylanana ya da düzeltilene kadar geçicidir. Onaylanan değerler etiketsiz yazılır.
@@ -145,3 +145,4 @@ Her kriter, spec sürümü ile birlikte raporlanır.
 |---|---|---|
 | v0.1 | 2026-10-22 | İlk taslak, varsayılan değerlerle |
 | v0.2 | 2026-10-22 | (V) -> [A] etiketi; K7 3,8–20,5 mA; 12 V satırı 220 Ω ve K5 buna göre; koruma düşümü 7 V hedefine dahil; 01_core -> 01_secim |
+| v0.2 onayı | 2026-10-22 | Mühendis onayladı (docs\DECISIONS.md K01) |
