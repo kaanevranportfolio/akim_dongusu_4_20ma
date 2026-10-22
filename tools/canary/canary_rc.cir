@@ -1,0 +1,18 @@
+* NUMERICAL CANARY (Rule 8): RC low-pass driven by a 1 ns ramp, checked against its exact solution.
+* Runs with every simulation batch; any canary_err_pct_* above 0.01 % fails the batch (exit 5).
+* Exact response for a ramp 0 -> 1 V over tr, then held (tau = R*C), for t >= tr:
+*   v(t) = 1 - (tau/tr) * ( exp(-(t-tr)/tau) - exp(-t/tau) )
+.param tau=1u tr=1n
+V_RAMP  V_IN   0      PULSE(0 1 0 {tr} {tr} 1 2)
+R_RC    V_IN   V_RC   1k
+C_RC    V_RC   0      1n
+* Rule 8: max step = tr/10
+.tran 0 10u 0 {tr/10}
+.save V(V_RC)
+.meas tran v_1tau FIND V(V_RC) AT=1u
+.meas tran v_2tau FIND V(V_RC) AT=2u
+.meas tran v_5tau FIND V(V_RC) AT=5u
+.meas tran canary_err_pct_1tau PARAM abs(v_1tau/(1-(tau/tr)*(exp(-(1u-tr)/tau)-exp(-1u/tau)))-1)*100
+.meas tran canary_err_pct_2tau PARAM abs(v_2tau/(1-(tau/tr)*(exp(-(2u-tr)/tau)-exp(-2u/tau)))-1)*100
+.meas tran canary_err_pct_5tau PARAM abs(v_5tau/(1-(tau/tr)*(exp(-(5u-tr)/tau)-exp(-5u/tau)))-1)*100
+.end

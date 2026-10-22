@@ -1,0 +1,235 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "component_specs_schema.json",
+  "title": "Component Selector — Input Specification Schema",
+  "description": "Formal input contract for component_specs.json. All scripts validate against this schema on startup.",
+  "version": "1.0",
+
+  "type": "object",
+  "required": ["schema_version", "project", "derating_profile", "components"],
+  "additionalProperties": false,
+
+  "properties": {
+
+    "schema_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$",
+      "description": "Schema version string — format: MAJOR.MINOR"
+    },
+
+    "project": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable project name"
+    },
+
+    "derating_profile": {
+      "type": "string",
+      "enum": ["hobby", "commercial", "industrial", "military"],
+      "description": "Derating profile applied to all components in this BOM"
+    },
+
+    "components": {
+      "type": "object",
+      "description": "Map of reference designator to component specification",
+      "minProperties": 1,
+      "additionalProperties": {
+        "$ref": "#/definitions/component"
+      }
+    }
+
+  },
+
+  "definitions": {
+
+    "component": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "ic_fixed",
+            "inductor",
+            "cap_ceramic",
+            "cap_electrolytic",
+            "diode_schottky",
+            "resistor",
+            "mosfet"
+          ],
+          "description": "Component type — drives derating rules and search parameters"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Human-readable design notes — not used by selector logic"
+        }
+      },
+      "allOf": [
+        { "$ref": "#/definitions/type_dispatch" }
+      ]
+    },
+
+    "type_dispatch": {
+      "description": "Enforce required fields per component type",
+      "if":   { "properties": { "type": { "const": "ic_fixed" } } },
+      "then": { "$ref": "#/definitions/ic_fixed" },
+      "else": {
+        "if":   { "properties": { "type": { "const": "inductor" } } },
+        "then": { "$ref": "#/definitions/inductor" },
+        "else": {
+          "if":   { "properties": { "type": { "const": "cap_ceramic" } } },
+          "then": { "$ref": "#/definitions/cap_ceramic" },
+          "else": {
+            "if":   { "properties": { "type": { "const": "cap_electrolytic" } } },
+            "then": { "$ref": "#/definitions/cap_electrolytic" },
+            "else": {
+              "if":   { "properties": { "type": { "const": "diode_schottky" } } },
+              "then": { "$ref": "#/definitions/diode_schottky" },
+              "else": {
+                "if":   { "properties": { "type": { "const": "resistor" } } },
+                "then": { "$ref": "#/definitions/resistor" },
+                "else": {
+                  "if":   { "properties": { "type": { "const": "mosfet" } } },
+                  "then": { "$ref": "#/definitions/mosfet" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "ic_fixed": {
+      "description": "Fixed IC — not selectable. Selector skips this entry.",
+      "required": ["type", "part", "fixed"],
+      "properties": {
+        "type":  { "type": "string" },
+        "part":  { "type": "string", "minLength": 1 },
+        "fixed": { "type": "boolean", "enum": [true] },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "inductor": {
+      "description": "SMD inductor specification",
+      "required": ["type", "inductance_uH", "Isat_min_A", "Irms_min_A", "DCR_max_mOhm"],
+      "properties": {
+        "type":             { "type": "string" },
+        "inductance_uH":    { "type": "number", "exclusiveMinimum": 0 },
+        "Isat_min_A":       { "type": "number", "exclusiveMinimum": 0,
+                              "description": "Peak circuit current — derating multiplier applied by engine" },
+        "Irms_min_A":       { "type": "number", "exclusiveMinimum": 0,
+                              "description": "RMS circuit current — derating multiplier applied by engine" },
+        "DCR_max_mOhm":     { "type": "number", "exclusiveMinimum": 0 },
+        "switching_freq_kHz": { "type": "number", "exclusiveMinimum": 0,
+                              "description": "Optional — enables SRF check if provided" },
+        "notes":            { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "cap_ceramic": {
+      "description": "MLCC ceramic capacitor specification",
+      "required": ["type", "V_working_min_V"],
+      "oneOf": [
+        { "required": ["capacitance_uF"] },
+        { "required": ["capacitance_pF"] }
+      ],
+      "properties": {
+        "type":             { "type": "string" },
+        "capacitance_uF":   { "type": "number", "exclusiveMinimum": 0 },
+        "capacitance_pF":   { "type": "number", "exclusiveMinimum": 0 },
+        "V_working_min_V":  { "type": "number", "exclusiveMinimum": 0,
+                              "description": "Working voltage on PCB — 2x derating applied by engine" },
+        "dielectric": {
+          "type": "string",
+          "enum": ["C0G", "NP0", "X7R", "X5R"],
+          "description": "Required dielectric. Y5V and Z5U are rejected — not listed as valid input."
+        },
+        "Irms_min_A":       { "type": "number", "exclusiveMinimum": 0 },
+        "ESR_max_mOhm":     { "type": "number", "exclusiveMinimum": 0 },
+        "notes":            { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "cap_electrolytic": {
+      "description": "Electrolytic capacitor specification",
+      "required": ["type", "capacitance_uF", "V_working_min_V"],
+      "properties": {
+        "type":             { "type": "string" },
+        "capacitance_uF":   { "type": "number", "exclusiveMinimum": 0 },
+        "V_working_min_V":  { "type": "number", "exclusiveMinimum": 0,
+                              "description": "Working voltage on PCB — 1.5x derating applied by engine" },
+        "ESR_max_mOhm":     { "type": "number", "exclusiveMinimum": 0 },
+        "Irms_min_A":       { "type": "number", "exclusiveMinimum": 0 },
+        "temp_max_C":       { "type": "number",
+                              "description": "Max PCB operating temperature — temp margin applied by engine" },
+        "notes":            { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "diode_schottky": {
+      "description": "Schottky diode specification",
+      "required": ["type", "V_reverse_min_V", "I_avg_min_A"],
+      "properties": {
+        "type":             { "type": "string" },
+        "V_reverse_min_V":  { "type": "number", "exclusiveMinimum": 0,
+                              "description": "Max reverse voltage on PCB — derating multiplier applied by engine" },
+        "I_avg_min_A":      { "type": "number", "exclusiveMinimum": 0,
+                              "description": "Average forward current — derating multiplier applied by engine" },
+        "Vf_max_V":         { "type": "number", "exclusiveMinimum": 0,
+                              "description": "Maximum acceptable forward voltage drop — absolute limit, no multiplier" },
+        "Cj_typ_pF":        { "type": "number", "exclusiveMinimum": 0,
+                              "description": "Junction capacitance — informational, affects efficiency calc" },
+        "notes":            { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "resistor": {
+      "description": "SMD resistor specification",
+      "required": ["type", "tolerance_pct", "is_feedback_or_timing"],
+      "oneOf": [
+        { "required": ["resistance_kOhm"] },
+        { "required": ["resistance_Ohm"]  }
+      ],
+      "properties": {
+        "type":                   { "type": "string" },
+        "resistance_kOhm":        { "type": "number", "exclusiveMinimum": 0 },
+        "resistance_Ohm":         { "type": "number", "exclusiveMinimum": 0 },
+        "tolerance_pct":          { "type": "number", "exclusiveMinimum": 0 },
+        "is_feedback_or_timing":  {
+          "type": "boolean",
+          "description": "true = enforce tempco ≤ 100ppm/°C. Set true for FB divider and RT timing resistors."
+        },
+        "P_actual_W":             { "type": "number", "exclusiveMinimum": 0,
+                                    "description": "Actual dissipated power — 2x derating applied by engine" },
+        "V_actual_V":             { "type": "number", "exclusiveMinimum": 0,
+                                    "description": "Actual voltage across resistor — 2x derating applied by engine" },
+        "notes":                  { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "mosfet": {
+      "description": "MOSFET specification — switching or synchronous rectifier",
+      "required": ["type", "Vds_max_V", "Id_min_A"],
+      "properties": {
+        "type":         { "type": "string" },
+        "Vds_max_V":    { "type": "number", "exclusiveMinimum": 0,
+                          "description": "Max drain-source voltage on PCB — derating multiplier applied by engine" },
+        "Id_min_A":     { "type": "number", "exclusiveMinimum": 0,
+                          "description": "Peak drain current — derating multiplier applied by engine" },
+        "Vgs_V":        { "type": "number", "exclusiveMinimum": 0,
+                          "description": "Gate drive voltage — used to verify Rds_on at actual Vgs" },
+        "Rds_max_mOhm": { "type": "number", "exclusiveMinimum": 0 },
+        "notes":        { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+
+  }
+}

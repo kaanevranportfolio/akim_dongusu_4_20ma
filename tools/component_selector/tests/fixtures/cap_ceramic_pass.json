@@ -1,0 +1,19 @@
+{
+  "description": "Ceramic cap C1 — should PASS. 250V rated >= 2x60=120V. X7R dielectric. Irms ok.",
+  "component_type": "cap_ceramic",
+  "derating_profile": "industrial",
+  "requirements": {
+    "V_working_min_V": 60,
+    "dielectric": "X7R",
+    "Irms_min_A": 1.72
+  },
+  "candidate": {
+    "v_rated_V": 250,
+    "dielectric": "X7R",
+    "irms_A": 2.0
+  },
+  "expected": {
+    "overall": "PASS",
+    "failed_rules": []
+  }
+}

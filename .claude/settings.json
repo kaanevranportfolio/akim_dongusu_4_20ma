@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "deny": [
+      "Edit(**/*.kicad_pcb)",
+      "Edit(**/*.kicad_sch)",
+      "Edit(**/*.kicad_sym)",
+      "Edit(**/*.kicad_mod)",
+      "Edit(//C:/Program Files/KiCad/**)",
+      "Edit(~/Documents/KiCad/**)",
+      "Edit(~/.claude/**)",
+      "Read(**/.env)",
+      "Read(**/.digikey_cache/**)",
+      "Bash(git reset --hard *)",
+      "Bash(git checkout .)",
+      "Bash(git clean *)",
+      "Bash(git tag *)",
+      "Bash(git commit --amend*)",
+      "PowerShell(git reset --hard *)",
+      "PowerShell(git checkout .)",
+      "PowerShell(git clean *)",
+      "PowerShell(git tag *)",
+      "PowerShell(git commit --amend*)"
+    ],
+    "ask": [
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "PowerShell(git commit *)",
+      "PowerShell(git push *)"
+    ]
+  }
+}

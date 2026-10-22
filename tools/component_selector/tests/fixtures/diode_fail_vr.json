@@ -1,0 +1,19 @@
+{
+  "description": "Schottky diode D1 — should FAIL Vr. 60V rated < 1.5x60=90V required",
+  "component_type": "diode_schottky",
+  "derating_profile": "industrial",
+  "requirements": {
+    "V_reverse_min_V": 60,
+    "I_avg_min_A": 3.5,
+    "Vf_max_V": 0.7
+  },
+  "candidate": {
+    "v_reverse_V": 60,
+    "i_avg_A": 5.5,
+    "vf_V": 0.6
+  },
+  "expected": {
+    "overall": "FAIL",
+    "failed_rules": ["V_reverse"]
+  }
+}

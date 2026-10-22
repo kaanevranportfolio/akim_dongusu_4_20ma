@@ -1,0 +1,19 @@
+{
+  "description": "Electrolytic cap C6 — should PASS. 25V rated >= 1.5x10=15V. ESR and Irms ok.",
+  "component_type": "cap_electrolytic",
+  "derating_profile": "industrial",
+  "requirements": {
+    "V_working_min_V": 10,
+    "ESR_max_mOhm": 27,
+    "Irms_min_A": 0.269
+  },
+  "candidate": {
+    "v_rated_V": 25,
+    "esr_mOhm": 20,
+    "irms_A": 0.5
+  },
+  "expected": {
+    "overall": "PASS",
+    "failed_rules": []
+  }
+}

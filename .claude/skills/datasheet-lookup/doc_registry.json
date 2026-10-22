@@ -1,0 +1,3 @@
+{
+  "_comment": "Variant gate registry (pipeline wide). 'part' must appear in the module FACTS.md; 'require' strings must all appear somewhere in the PDF text; 'forbid' strings must not appear on pages 1-3; 'revision' strings must appear on page 1 or 2. Add an entry only after reading the document identity yourself."
+}

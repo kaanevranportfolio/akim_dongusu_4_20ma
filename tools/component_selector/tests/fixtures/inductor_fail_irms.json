@@ -1,0 +1,19 @@
+{
+  "description": "Inductor — should FAIL Irms. Candidate 4.0A < required 1.25x3.502=4.3775A",
+  "component_type": "inductor",
+  "derating_profile": "industrial",
+  "requirements": {
+    "Isat_min_A": 3.97,
+    "Irms_min_A": 3.502,
+    "DCR_max_mOhm": 25
+  },
+  "candidate": {
+    "isat_A": 6.5,
+    "irms_A": 4.0,
+    "dcr_mOhm": 18
+  },
+  "expected": {
+    "overall": "FAIL",
+    "failed_rules": ["Irms"]
+  }
+}

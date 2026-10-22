@@ -1,0 +1,17 @@
+{
+  "description": "Resistor R5 feedback — should FAIL tempco. 200ppm > 100ppm limit for feedback/timing.",
+  "component_type": "resistor",
+  "derating_profile": "industrial",
+  "requirements": {
+    "tolerance_pct": 1,
+    "is_feedback_or_timing": true
+  },
+  "candidate": {
+    "tolerance_pct": 1,
+    "tempco_ppm": 200
+  },
+  "expected": {
+    "overall": "FAIL",
+    "failed_rules": ["Tempco"]
+  }
+}

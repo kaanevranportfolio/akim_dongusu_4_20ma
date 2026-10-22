@@ -1,0 +1,31 @@
+# Vendor documents: large and re-downloadable; docs/ref/INDEX.md and crops stay tracked
+docs/ref/*.pdf
+docs/ref/*.PDF
+
+# Rendered PNGs of SVG figures are regenerated from the SVG sources; datasheet crops (D<nn>_p<page>_<topic>.png) stay tracked
+**/docs/figures/*.png
+!**/docs/figures/D[0-9][0-9]_p*.png
+
+# Python / simulation byproducts
+__pycache__/
+*.pyc
+*.qraw
+*.partial.pdf
+**/sim/out/*.raw
+**/sim/out/*.log
+
+# Generated PDFs (sources: md, .py, svg, crops are versioned)
+**/docs/*.pdf
+**/docs/review/*.pdf
+
+# KiCad local files
+*.kicad_prl
+*-backups/
+fp-info-cache
+_autosave-*
+.history/
+
+# Secrets and caches (component selector): never versioned, never read by sessions
+.env
+.digikey_cache/
+tools/component_selector/*.log

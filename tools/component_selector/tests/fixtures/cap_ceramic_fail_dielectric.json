@@ -1,0 +1,17 @@
+{
+  "description": "Ceramic cap — should FAIL dielectric. Spec requires X7R, candidate is Y5V",
+  "component_type": "cap_ceramic",
+  "derating_profile": "industrial",
+  "requirements": {
+    "V_working_min_V": 60,
+    "dielectric": "X7R"
+  },
+  "candidate": {
+    "v_rated_V": 250,
+    "dielectric": "Y5V"
+  },
+  "expected": {
+    "overall": "FAIL",
+    "failed_rules": ["Dielectric"]
+  }
+}

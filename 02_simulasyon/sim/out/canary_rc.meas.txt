@@ -1,0 +1,12 @@
+.meas tran v_1tau find v(v_rc) at=1u:
+       0.631937      1e-06
+.meas tran v_2tau find v(v_rc) at=2u:
+       0.864597      2e-06
+.meas tran v_5tau find v(v_rc) at=5u:
+       0.993259      5e-06
+.meas tran canary_err_pct_1tau param abs(v_1tau/(1-(tau/tr)*(exp(-(1u-tr)/tau)-exp(-1u/tau)))-1)*100:
+     0.000139361
+.meas tran canary_err_pct_2tau param abs(v_2tau/(1-(tau/tr)*(exp(-(2u-tr)/tau)-exp(-2u/tau)))-1)*100:
+     3.7485e-05
+.meas tran canary_err_pct_5tau param abs(v_5tau/(1-(tau/tr)*(exp(-(5u-tr)/tau)-exp(-5u/tau)))-1)*100:
+     1.62618e-06

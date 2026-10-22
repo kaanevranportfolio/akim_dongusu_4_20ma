@@ -1,0 +1,19 @@
+{
+  "description": "Inductor — should PASS all rules under industrial profile",
+  "component_type": "inductor",
+  "derating_profile": "industrial",
+  "requirements": {
+    "Isat_min_A": 3.97,
+    "Irms_min_A": 3.502,
+    "DCR_max_mOhm": 25
+  },
+  "candidate": {
+    "isat_A": 6.5,
+    "irms_A": 4.5,
+    "dcr_mOhm": 18
+  },
+  "expected": {
+    "overall": "PASS",
+    "failed_rules": []
+  }
+}

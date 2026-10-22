@@ -1,0 +1,19 @@
+{
+  "description": "Inductor — should FAIL DCR. Candidate 30mOhm > max 25mOhm",
+  "component_type": "inductor",
+  "derating_profile": "industrial",
+  "requirements": {
+    "Isat_min_A": 3.97,
+    "Irms_min_A": 3.502,
+    "DCR_max_mOhm": 25
+  },
+  "candidate": {
+    "isat_A": 6.5,
+    "irms_A": 4.5,
+    "dcr_mOhm": 30
+  },
+  "expected": {
+    "overall": "FAIL",
+    "failed_rules": ["DCR"]
+  }
+}

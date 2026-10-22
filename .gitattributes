@@ -1,0 +1,36 @@
+* text=auto eol=lf
+
+# KiCad (S-expression text)
+*.kicad_pro   text eol=lf
+*.kicad_sch   text eol=lf
+*.kicad_pcb   text eol=lf
+*.kicad_sym   text eol=lf
+*.kicad_mod   text eol=lf
+*.kicad_dru   text eol=lf
+*.kicad_wks   text eol=lf
+sym-lib-table text eol=lf
+fp-lib-table  text eol=lf
+
+# QSPICE / SPICE
+*.qsch text eol=lf
+*.cir  text eol=lf
+*.net  text eol=lf
+*.lib  text eol=lf
+*.sub  text eol=lf
+*.mod  text eol=lf
+*.inc  text eol=lf
+
+*.md   text eol=lf
+
+# Model vault: vendor files are stored byte-exact (no EOL normalization), so the repo copy
+# always hashes identically to what the manufacturer shipped. Must stay after the *.lib/*.sub rules.
+**/sim/models/** -text
+# EM handoff: the engineer-exported HyperLynx file is stored byte-exact, as KiCad wrote it.
+**/em/*.hyp -text
+
+# Binary
+*.qraw binary
+*.png  binary
+*.pdf  binary
+*.step binary
+*.zip  binary

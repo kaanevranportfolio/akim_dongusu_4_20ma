@@ -1,0 +1,169 @@
+{
+  "$schema": "../schemas/derating_profiles_schema.json",
+  "description": "Derating multipliers per application profile — IPC-2221 based. Edit values here to tune profiles. Do not add or remove keys without updating derating_rules.py.",
+  "version": "1.0",
+
+  "profiles": {
+
+    "hobby": {
+      "description": "Prototype and hobby use. Engineer present during operation. Failure is recoverable.",
+      "capacitor_ceramic": {
+        "voltage_multiplier":       1.5,
+        "description":              "V_rated >= 1.5 x V_working"
+      },
+      "capacitor_electrolytic": {
+        "voltage_multiplier":       1.25,
+        "temp_margin_C":            10,
+        "description":              "V_rated >= 1.25 x V_working. Temp rating >= max_pcb_temp + 10C"
+      },
+      "inductor": {
+        "isat_multiplier":          1.25,
+        "irms_multiplier":          1.10,
+        "srf_multiplier":           10,
+        "description":              "Isat >= 1.25 x I_peak. Irms >= 1.10 x I_rms. SRF >= 10 x Fsw"
+      },
+      "diode_schottky": {
+        "v_reverse_multiplier":     1.25,
+        "i_avg_multiplier":         1.25,
+        "description":              "Vr >= 1.25 x V_reverse. If >= 1.25 x I_avg"
+      },
+      "resistor": {
+        "power_multiplier":         1.5,
+        "voltage_multiplier":       1.5,
+        "tempco_max_ppm":           200,
+        "description":              "P_rated >= 1.5 x P_actual. Tempco <= 200 ppm/C for feedback/timing"
+      },
+      "mosfet": {
+        "vds_multiplier":           1.25,
+        "id_multiplier":            1.25,
+        "description":              "Vds >= 1.25 x V_bus_max. Id >= 1.25 x I_peak"
+      },
+      "general": {
+        "temp_margin_C":            10,
+        "lead_time_max_weeks":      16,
+        "description":              "Temp rating >= max_pcb_temp + 10C. Lead time advisory only."
+      }
+    },
+
+    "commercial": {
+      "description": "Consumer and commercial products. IPC-2221 standard. Designed for service life without field access.",
+      "capacitor_ceramic": {
+        "voltage_multiplier":       2.0,
+        "description":              "V_rated >= 2.0 x V_working"
+      },
+      "capacitor_electrolytic": {
+        "voltage_multiplier":       1.5,
+        "temp_margin_C":            20,
+        "description":              "V_rated >= 1.5 x V_working. Temp rating >= max_pcb_temp + 20C"
+      },
+      "inductor": {
+        "isat_multiplier":          1.5,
+        "irms_multiplier":          1.25,
+        "srf_multiplier":           10,
+        "description":              "Isat >= 1.5 x I_peak. Irms >= 1.25 x I_rms. SRF >= 10 x Fsw"
+      },
+      "diode_schottky": {
+        "v_reverse_multiplier":     1.5,
+        "i_avg_multiplier":         1.5,
+        "description":              "Vr >= 1.5 x V_reverse. If >= 1.5 x I_avg"
+      },
+      "resistor": {
+        "power_multiplier":         2.0,
+        "voltage_multiplier":       2.0,
+        "tempco_max_ppm":           100,
+        "description":              "P_rated >= 2.0 x P_actual. Tempco <= 100 ppm/C for feedback/timing"
+      },
+      "mosfet": {
+        "vds_multiplier":           1.5,
+        "id_multiplier":            1.5,
+        "description":              "Vds >= 1.5 x V_bus_max. Id >= 1.5 x I_peak"
+      },
+      "general": {
+        "temp_margin_C":            20,
+        "lead_time_max_weeks":      12,
+        "description":              "Temp rating >= max_pcb_temp + 20C. Lead time > 12 weeks flagged."
+      }
+    },
+
+    "industrial": {
+      "description": "Industrial and embedded systems. IPC-2221 full compliance. Extended service life, limited field access.",
+      "capacitor_ceramic": {
+        "voltage_multiplier":       2.0,
+        "description":              "V_rated >= 2.0 x V_working"
+      },
+      "capacitor_electrolytic": {
+        "voltage_multiplier":       1.5,
+        "temp_margin_C":            25,
+        "description":              "V_rated >= 1.5 x V_working. Temp rating >= max_pcb_temp + 25C"
+      },
+      "inductor": {
+        "isat_multiplier":          1.5,
+        "irms_multiplier":          1.25,
+        "srf_multiplier":           10,
+        "description":              "Isat >= 1.5 x I_peak. Irms >= 1.25 x I_rms. SRF >= 10 x Fsw"
+      },
+      "diode_schottky": {
+        "v_reverse_multiplier":     1.5,
+        "i_avg_multiplier":         1.5,
+        "description":              "Vr >= 1.5 x V_reverse. If >= 1.5 x I_avg"
+      },
+      "resistor": {
+        "power_multiplier":         2.0,
+        "voltage_multiplier":       2.0,
+        "tempco_max_ppm":           100,
+        "description":              "P_rated >= 2.0 x P_actual. Tempco <= 100 ppm/C for feedback/timing"
+      },
+      "mosfet": {
+        "vds_multiplier":           1.5,
+        "id_multiplier":            1.5,
+        "description":              "Vds >= 1.5 x V_bus_max. Id >= 1.5 x I_peak"
+      },
+      "general": {
+        "temp_margin_C":            25,
+        "lead_time_max_weeks":      12,
+        "description":              "Temp rating >= max_pcb_temp + 25C. Lead time > 12 weeks flagged."
+      }
+    },
+
+    "military": {
+      "description": "Military and aerospace. MIL-HDBK-217 compliance. No field access. Failure is mission-critical.",
+      "capacitor_ceramic": {
+        "voltage_multiplier":       2.0,
+        "description":              "V_rated >= 2.0 x V_working"
+      },
+      "capacitor_electrolytic": {
+        "voltage_multiplier":       2.0,
+        "temp_margin_C":            40,
+        "description":              "V_rated >= 2.0 x V_working. Temp rating >= max_pcb_temp + 40C"
+      },
+      "inductor": {
+        "isat_multiplier":          2.0,
+        "irms_multiplier":          1.5,
+        "srf_multiplier":           10,
+        "description":              "Isat >= 2.0 x I_peak. Irms >= 1.5 x I_rms. SRF >= 10 x Fsw"
+      },
+      "diode_schottky": {
+        "v_reverse_multiplier":     2.0,
+        "i_avg_multiplier":         2.0,
+        "description":              "Vr >= 2.0 x V_reverse. If >= 2.0 x I_avg"
+      },
+      "resistor": {
+        "power_multiplier":         2.0,
+        "voltage_multiplier":       2.0,
+        "tempco_max_ppm":           50,
+        "description":              "P_rated >= 2.0 x P_actual. Tempco <= 50 ppm/C for feedback/timing"
+      },
+      "mosfet": {
+        "vds_multiplier":           2.0,
+        "id_multiplier":            2.0,
+        "description":              "Vds >= 2.0 x V_bus_max. Id >= 2.0 x I_peak"
+      },
+      "general": {
+        "temp_margin_C":            40,
+        "lead_time_max_weeks":      12,
+        "description":              "Temp rating >= max_pcb_temp + 40C. Lead time > 12 weeks flagged."
+      }
+    }
+
+  }
+}
