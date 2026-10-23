@@ -17,4 +17,4 @@ module-intake skill: dosya listesi, BOM sayımı (SEÇİLDİ/VARSAYILAN/AÇIK/D�
 ## Yollar
 - KiCad projesi: 03_kicad\akim_dongusu_4_20ma.kicad_pro / .kicad_sch / .kicad_pcb [A] (mühendis KiCad'de oluşturur)
 - kicad-cli: C:\Program Files\KiCad\10.0\bin\kicad-cli.exe
-- Raporlar: docs\review\ (erc.json, drc.json, netlist, BOM); kontrol PDF'i: python ..\tools\check_pdf.py docs\<tablo>.md --crops ..\02_simulasyon\out\freeze\figures docs\figures docs\review\crops
+- Raporlar: docs\review\ (erc.json, drc.json, netlist, BOM); kontrol PDF'i: python ..\tools\check_pdf.py docs\<tablo>.md --crops ..\02_simulasyon\out\freeze\figures docs\figures docs\review\crops. Tabloyu mühendise veren oturum son mesajına şu satırı koyar: `kontrol PDF'i hazır: <module-relative path>.pdf, <N> sayfa, <M> crop, <K> eksik`; K 0 değilse PDF teslim edilmez (kök Session kuralı).

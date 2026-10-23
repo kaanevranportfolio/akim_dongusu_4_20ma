@@ -12,16 +12,24 @@ description: Write, run and evaluate QSPICE testbenches through run_sim.ps1. Tri
    before the run.
 3. Testbench: every .tran has a .save list; above every .tran, the max-step derivation
    (at most 1/10 of the fastest edge, naming that edge). Steady-state starts prove
-   periodicity before measuring. Runs estimated over 15 min are marked LONG.
+   periodicity before measuring. Runs estimated over 15 min are marked LONG (human rule: the author estimates and
+   writes the netlist line `* RUN_CLASS: LONG`; the script only reads that marker, it measures nothing; the
+   QSPICE timeout is 30 min, LONG 4 h).
 4. Run only through the shared runner tools\run_sim.ps1 (one copy for the pipeline,
    never copied into a module). -SimDir is relative to the pipeline root:
    powershell -NoProfile -ExecutionPolicy Bypass -File <pipeline>\tools\run_sim.ps1
      -SimDir <module>\sim -Analyze <analyzer scripts, report script last>
    Raw data (step 7): add -CleanRaw and put <pipeline>\tools\qraw_export.py among the -Analyze scripts.
    Add -Long only for testbenches marked LONG. Prerequisites inside <module>\sim\:
-   canary_rc.cir (copy of <pipeline>\tools\canary\canary_rc.cir; it runs
-   first), models\ with the vendor files, the testbench .cir files and their analyze_*.py.
+   canary_rc.cir (copy of <pipeline>\tools\canary\canary_rc.cir), models\ with the vendor files, the testbench .cir files
+   and their analyze_*.py. run_sim.ps1 does NOT run the canary first or by itself: in the default batch (no input
+   named) it is simulated like any other .cir, in file-name order; with testbenches named on the command line it runs
+   only if named. The script only checks every canary_err_pct_* .meas it finds (above 0.01 % or NaN = exit 5). The
+   caller runs the canary in the same batch (default batch, or name it) and states in the report that it ran.
    If <pipeline>\tools\run_sim.ps1 is missing, stop and ask. Close every report PDF first.
+   Figures of the run: the circuit by docs\sim\circuits.py (hand layout script, step 6) and the result plot by
+   docs\sim\plotkit.py via a copy of docs\sim\result_template.py (red signal labels = the .save names; limits cite SPEC K<nn> or [A]);
+   index format docs\sim\INDEX_TEMPLATE.md. Usage: figures skill.
 5. Results: map .step results by their step tag, never by order. Label simulation results
    [R] (or [C] when the engineer reproduced the run).
 6. Circuit figure (every testbench, before the result plot): docs\sim\<testbench>\circuit.svg/.png
@@ -37,8 +45,9 @@ description: Write, run and evaluate QSPICE testbenches through run_sim.ps1. Tri
    trivial RC test and 24 files from diagnostics).
 
 ## Exit codes (run_sim.ps1)
-0 success | 1 simulation, analyzer or report error: read the log | 3 missing model or a
-symbol library used as a model: stop, the engineer supplies the vendor file | 4 .tran
+0 success | 1 simulation, analyzer or report error: read the log | 3 missing model, or an
+included file that is a KiCad symbol library (detected by content: first line `EESchema-LIBRARY` or `(kicad_symbol_lib`,
+in Test-Models), or an included file without .SUBCKT/.MODEL, or an undefined subcircuit: stop, the engineer supplies the vendor file | 4 .tran
 without .save | 5 numerical canary failed: stop and report, never relax tolerances.
 
 ## Rules, each with its incident

@@ -1,0 +1,8 @@
+* fixture for the plotkit tests: unity-gain buffer step response (synthetic data, not a real design)
+.include models/opampx.sub
+VIN INP 0 PWL(0 2 2u 2 2.1u 8 12u 8 12.1u 2 22u 2)
+XU1 INP OUT VCC 0 OUT OPAMPX
+RL OUT 0 10k
+.tran 0 22u 0 2n
+.save V(INP) V(OUT) I(RL)
+.end

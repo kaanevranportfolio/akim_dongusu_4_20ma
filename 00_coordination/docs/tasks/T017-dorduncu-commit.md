@@ -1,5 +1,5 @@
 # T017 - DigiKey V4 istemcisi ve temizlik commit/push
-Durum: ÇALIŞIYOR
+Durum: BİTTİ
 ## İstek
 Goal: commit and push the DigiKey V4 work (00_coordination/T015, T016) and the pending ticket/result files as ONE commit. Run from the pipeline root C:\pipelines\akim_dongusu_4_20ma. Edit only this ticket file. Allowed git write commands: `git add` with explicit file paths, one `git commit`, `git push`. Never tag / amend / reset / checkout . / clean / force-push / delete. Never read or print .env, tokens or credential files.
 Steps (STOP = wait for the engineer's reply):
@@ -15,8 +15,8 @@ Output: table of at most 6 lines (step | done | value), then at most 3 lines of 
 | 1 Salt okuma | evet | main; origin https://github.com/kaanevranportfolio/akim_dongusu_4_20ma.git; kaanevranportfolio / kaanevran@hotmail.com; HEAD 8243d58 (beklenen) |
 | 2 Hijyen (yenilendi, T018 sonrası) | temiz | `.env` ignore'da. Değişen/izlenmeyen yollar arasında .env, .digikey_cache, *.pem, *.pdf, *.log, *.tmp, *.qraw, __pycache__, result*.json, 1 MB üstü dosya YOK. result_1..4.json artık ignore'da (.gitignore:35), listede görünmüyor |
 | 3 Önerilen add listesi | evet, onay bekliyor | 25 yol, 128495 bayt (aşağıda) |
-| 4 Commit | YAPILMADI | "commit go" bekleniyor |
-| 5 Push | YAPILMADI | ayrı "push go" bekleniyor |
+| 4 Commit | evet (commit go alındı) | 3d311fa, 25 dosya, 1058 ekleme / 130 silme; commit sonrası `git status --short` temiz. Bu satır commit'ten sonra yazıldı (bilet çalışma ağacında değişik görünür) |
+| 5 Push | evet (push go alındı) | 8243d58..3d311fa main -> main; `git log origin/main --oneline -1` = 3d311fa = HEAD. `git status --short`: yalnız M T017 (bu bilet, commit sonrası yazılan satırlar) |
 
 Add listesi (tek tek yol):
 - tools/component_selector (6 dosya, 49004 bayt): digikey_v4.py, search_digikey.py, README.md, tests/test_digikey_v4.py, tests/test_derating.py, tests/fixtures/digikey_v4_keyword_response.json

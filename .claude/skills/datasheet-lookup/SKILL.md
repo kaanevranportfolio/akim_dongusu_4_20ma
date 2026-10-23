@@ -10,11 +10,11 @@ Yollar: oturum modül klasöründen açılır (cwd = modül). Betikler `..\.clau
 Sıra (değiştirme):
 1. `FACTS.md` önce. Değer orada [V] + sayfa ile varsa belgeye gitme.
 2. Yoksa ara: `python ..\.claude\skills\datasheet-lookup\pdf_search.py <pdf> "<terim>" [--context 2]`
-   Çıktı sayfa işaretlidir (`=== PDF p.N ===`) ve en çok 60 satırdır.
+   Çıktı sayfa işaretlidir (`=== PDF p.N ===`) ve en çok 60 sonuç satırı artı 1 kesme notudur (`... N more lines cut`); GATE ve REPORT satırları bu sayıya dahil değildir.
    Parametre tablosu için: `python ..\.claude\skills\datasheet-lookup\pdf_tables.py <pdf> <sayfa> [--table K] [--grep METİN]` (en çok 60 satır; satırlar sütun başlıklarıyla: min/typ/max/birim/koşul).
-3. Gerekirse tek sayfanın tek aralığını oku: `pdf_search.py <pdf> --page N --from L1 --to L2` (en çok 60 satır).
+3. Gerekirse tek sayfanın tek aralığını oku: `pdf_search.py <pdf> --page N --from L1 --to L2` (en çok 60 sonuç satırı).
 4. Yalnızca şekil/grafik/land pattern/denklem için: `python ..\.claude\skills\datasheet-lookup\pdf_crop.py <pdf> <sayfa> x0 y0 x1 y1 [--dpi 150]`
-   Koordinatlar sayfanın 0-1 oransal değerleridir; tek kırpılmış PNG yazar (`docs\ref\_crops\`), sonra Read ile görüntüle. Tam sayfa görüntü yok.
+   Koordinatlar sayfanın 0-1 oransal değerleridir; tek kırpılmış PNG yazar (`docs\ref\_crops\`), sonra Read ile görüntüle. `--dpi` 100..200 aralığındadır (varsayılan 150; dışı hata). Tam sayfa görüntü yok: kutu sayfa alanının %95'i veya fazlasını kaplıyorsa (örn. `0 0 1 1`) betik hata mesajıyla sıfırdan farklı kodla durur; atlatma bayrağı yoktur.
    Metin olarak temiz çıkmayan denklem veya sembol: `pdf_crop.py <pdf> <sayfa> --around "<etiket metni>" [--pad-up 0.04] [--pad-down 0.10]` denklemi etiketiyle tek görüntüde kırpar.
    Crop adı kuralı: mühendise verilen her crop `D<nn>_p<sayfa>_<konu>.png` adıyla kaydedilir (`--topic <konu>`, D<nn> PDF dosya adından veya `--doc D<nn>`), cevapta D<nn> ve sayfa atfedilir.
 5. Ekran görüntüsü yerine netlist veya SVG kullan.
@@ -30,10 +30,10 @@ Her betik başlarken `GATE OK` / `GATE FAIL` basar. Kapı `doc_registry.json` ka
 - Grafikten okunan değer [V] olmaz: `[C] grafikten okundu, ±x %`.
 
 ## Arama terimleri
-Belgenin kendi eş anlamlılarını dene, sonra "bulunamadı" de: `pdf_search.py` terim eşleşmezse otomatik dener (VDD / VCC / supply voltage / power supply; ESR / equivalent series resistance; Iq / quiescent / supply current; output capacitor / Cout; absolute maximum; dropout; thermal resistance ...). Çıktı hangi eş anlamlıyla bulduğunu veya `no match after trying: ...` listesini yazar. Liste `pdf_search.py` içindeki `SYNONYMS`; belgeye özgü yeni terim görürsen oraya ekle.
+Belgenin kendi eş anlamlılarını dene, sonra "bulunamadı" de: `pdf_search.py` terim eşleşmezse otomatik dener (7 grup, kodla birebir: [vdd, vcc, supply voltage, power supply, v dd]; [esr, equivalent series resistance]; [iq, quiescent, ground pin current, supply current, idd, icc]; [output capacitor, cout, output capacitance]; [absolute maximum, abs. max, maximum ratings]; [dropout, vin - vout, vin-vout]; [rθja, thermal resistance, theta, rja]; yalnız aranan terim bir grubun üyesiyse o grubun diğer üyeleri denenir). Çıktı hangi eş anlamlıyla bulduğunu veya `no match after trying: ...` listesini yazar. Liste `pdf_search.py` içindeki `SYNONYMS`; belgeye özgü yeni terim görürsen oraya ekle.
 
 ## Rapor
-Her betik son satırda `REPORT: lines_read=N tables_used=T images_used=I` basar. Her aramanın sonunda bu üçünü bildir (okunan satır, kullanılan tablo, kullanılan görüntü). Bir aramanın birden çok çağrısı varsa topla.
+Her betik (`pdf_search.py`, `pdf_tables.py`, `pdf_crop.py`) son satırda `REPORT: lines_read=N tables_used=T images_used=I` basar. Her aramanın sonunda bu üçünü bildir (okunan satır, kullanılan tablo, kullanılan görüntü). Bir aramanın birden çok çağrısı varsa topla.
 
 ## Kurallar
 - Değer yalnızca **tam parçanın kendi belgesinden** alınır (varyant/paket eşleşmeli). Başka parça, ailenin başka üyesi veya benzer belge kullanılmaz.
@@ -43,6 +43,6 @@ Her betik son satırda `REPORT: lines_read=N tables_used=T images_used=I` basar.
 - Yeni PDF'ler (mühendis ekledi ya da otomatik indirildi) kayıt sırasında sıradaki boş `D<nn>_` önekini alır ve `..\docs\ref\INDEX.md`'ye bir satır yazılır; bu iş 00_coordination biletiyle yapılır, modül oturumu belge kütüphanesine yazmaz.
 
 ## Test seti
-`tests.md` ve `tests_reference_load.md`: yük projesinin 8 sorusu (referans yanıtlar mühendis onaylı). Betikleri değiştirdikten sonra sorular yeniden yanıtlanır; mühendisin onayladığı yanıtlar beklenen değerdir.
+`tests.md` ve `tests_reference_load.md`: yük projesinin 8 sorusu (referans yanıtlar mühendis onaylı). `tests_reference_load.md` ÇALIŞTIRILAMAZ: eski dosya adlarına bağlı, D01/D02 ile yeniden yazılana kadar kullanılmaz. Offline betik testleri: `tools\tests\test_datasheet_lookup.py`. Betikleri değiştirdikten sonra sorular yeniden yanıtlanır; mühendisin onayladığı yanıtlar beklenen değerdir.
 
 Doğrular: bir değerin gerçekten hangi belgenin hangi sayfasından geldiğini.

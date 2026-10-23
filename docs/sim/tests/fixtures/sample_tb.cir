@@ -1,0 +1,4 @@
+* fixture testbench for pin_map tests
+XU1 VOUT_NET VIN_NET 0 PARTA
+XU2 VDD_NET SENSE_NET EXTRA_NET PARTB
+.end

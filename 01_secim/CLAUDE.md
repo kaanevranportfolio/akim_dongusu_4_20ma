@@ -24,3 +24,4 @@ DigiKey ile başla. Arayüz eklenti gibi tasarlanır; Octopart/Nexar, LCSC ve JL
 
 ## Öncelik
 Önce SPICE modelinin güvenilir kaynakta olması ve tam varyant doğruluğu; sonra fiyat, stok, teslim süresi.
+- Kontrol PDF'i: Every session that gives the engineer a check table also puts this line in its last message: `kontrol PDF'i hazır: <module-relative path>.pdf, <N> sayfa, <M> crop, <K> eksik`; if K is not 0 the PDF is not delivered. Command: `python ..\tools\check_pdf.py docs\<table>.md`.

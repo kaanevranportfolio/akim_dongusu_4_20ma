@@ -1,0 +1,11 @@
+* fixture with L, D, I, M elements for the symbol tests; not a real design
+.model DX D
+.model NM NMOS
+I1 A 0 1m
+L1 A B 10u
+D1 B C DX
+M1 C G 0 0 NM
+V1 G 0 3
+R1 C A 1k
+.save V(C) I(L1)
+.end

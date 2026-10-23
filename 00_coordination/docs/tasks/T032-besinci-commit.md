@@ -1,0 +1,36 @@
+# T032 - fifth commit: document library, tool fixes, figure/plot tooling (T019-T031)
+Durum: ÇALIŞIYOR
+## İstek
+Run only from a VS Code session started at the pipeline root (window titled akim_dongusu_4_20ma). If the session was started in a module folder, stop and report. Never amend / force-push / tag / delete / reset. Never stage .env, tokens, certificates, docs\ref\*.pdf, 01_secim\out\*, __pycache__, *.tmp, run.log, result*.json.
+Steps:
+1. `git status --short` and `git log -1 --format=%an,%ae` plus `git config --local user.name user.email`: identity must be kaanevranportfolio / kaanevran@hotmail.com, else stop. Report the status grouped by top-level folder (counts + file names for <= 60 lines).
+2. Classify every changed/untracked path as EXPECTED or UNEXPECTED. Expected: 00_coordination\ (HANDOFF.md, docs\DECISIONS.md, docs\lessons.md if changed, docs\tasks\T019-T032); root CLAUDE.md; docs\RULE_LEDGER.md; docs\INTERFACES.md; docs\ref\INDEX.md; docs\sim\ (circuits.py, symbols.py, pin_map.py, plotkit.py, result_template.py, INDEX_TEMPLATE.md, tests\ incl. fixtures); .claude\skills\ (check-pdf, datasheet-lookup incl. doc_registry.json, figures, qspice-sim); tools\ (check_pdf.py, README.md, run_sim.ps1, canary\canary_rc.cir, tests\); 01_secim\, 02_simulasyon\, 03_kicad\ text/markdown/code changes made by their sessions (CLAUDE.md, DEVLOG, FACTS, docs\). For any UNEXPECTED path (new folder, binary, big file > 1 MB, anything secret-like) do not stage it; list it with size.
+3. Stage explicit paths only (no `git add -A` / `git add .`; folder paths are allowed only for docs\sim\ and the tests\ folders after checking that `git status` shows no ignored/unexpected file inside). Show `git diff --cached --stat` (<= 40 lines) and `git diff --cached --name-only | wc -l`.
+4. STOP here. Write the staged list and the exact commit message below into Sonuç and wait for the engineer's "commit go" in the chat. Do not commit before it.
+   Message: `Add document library intake, check-pdf fixes, circuit and result plot tooling` (subject) + body lines: `T019-T031: D01/D02 intake with registry and variant gate; check_pdf back-links, doc-vs-code fixes and tests; PDF path reporting rule; pin map and three-name figures; circuits.py/symbols.py classic schematic drawer; plotkit.py result plots with legend, palette and dashed-line rule; ticket-not-in-chat rule.`
+5. After "commit go": `git commit -m` with exactly that message (subject + body). Report the commit hash and `git show --stat --oneline -1` (<= 15 lines). STOP and wait for "push go".
+6. After "push go": `git push origin main`; report the output and `git status -sb`. If it fails, report; do not retry with other options.
+Output: Sonuç per step. Closed tickets get their Sonuç lines after commit; that shows as changes next time (normal).
+## Sonuç
+**Adım 1.** Oturum pipeline kökünden (`C:\pipelines\akim_dongusu_4_20ma`, `git rev-parse --show-toplevel` aynı yol), dal `main`. Kimlik: son commit `kaanevranportfolio,kaanevran@hotmail.com`; `git config --local user.name/user.email` = kaanevranportfolio / kaanevran@hotmail.com (uyuşuyor). `git status --short -uall`: 131 yol. Üst klasöre göre: kök 1 (CLAUDE.md), .claude 8, 00_coordination 17, 01_secim 72, 02_simulasyon 1, 03_kicad 1, docs 25, tools 6 (pycache'ler ignored, sayıya dahil değil). Dosya adları aşağıda sınıflandırma ve aşama listesinde.
+
+**Adım 2 - sınıflandırma.**
+EXPECTED (71, hepsi aşamaya alındı): .claude\skills\check-pdf\SKILL.md; datasheet-lookup\{SKILL.md, doc_registry.json, pdf_crop.py, pdf_search.py, tests_reference_load.md}; figures\SKILL.md; qspice-sim\SKILL.md; 00_coordination\{HANDOFF.md, docs\DECISIONS.md, docs\tasks\T017 (M), T019-T032 (14 yeni)}; kök CLAUDE.md; docs\{RULE_LEDGER.md, INTERFACES.md, ref\INDEX.md}; docs\sim\ (circuits.py, symbols.py, pin_map.py, plotkit.py, result_template.py, INDEX_TEMPLATE.md, tests\ 4 test dosyası + 12 fixture dosyası); tools\{README.md, check_pdf.py, run_sim.ps1, canary\canary_rc.cir, tests\ (test_check_pdf.py, test_datasheet_lookup.py)}; 01_secim\{CLAUDE.md, FACTS.md, HANDOFF.md, docs\DECISIONS.md, docs\DEVLOG.md, docs\lessons.md, docs\tasks\T007-T012}; 02_simulasyon\CLAUDE.md; 03_kicad\CLAUDE.md.
+
+UNEXPECTED (AŞAMAYA ALINMADI, 60 yol):
+- `01_secim\out\passA\*` (kural: 01_secim\out\* stage edilmez), 30 dosya: check\D01_critical.pdf 844 696 B, check\D02_critical.pdf 1 111 869 B (> 1 MB, tek büyük dosya), check\D01_critical.md, D02_critical.md, core_candidates.md, devir_02_simulasyon.md, core_search\ (core_search.py, core_spec.json, op_1-4.json 590 KB'a kadar, ref_1-4.json 695 KB'a kadar, opamps.md, refs.md), ref_search\ (ref_search.py, ref_spec.json, ref2_1-8.json 618 KB'a kadar, refs2.md).
+- `01_secim\sim\models\*` (yeni klasör, ikili/vendor dosyaları), 17 dosya: MAX6070\max6070_12.lib; TLV333\SBOM965C.ZIP, SBOM967B.ZIP, SBOM965C\ (TLVx333.LIB, .LIBsig, .OLB, DSN, OPJ, sim/mrk/prb dosyaları), SBOM967B\ (TLVx333.LIB, .TLD, .TSM); _pages\ti_tlv333.html 290 092 B. (T020 `.gitignore` bileti modelleri ignore ediyor sanılıyordu; bu yollar "untracked" göründüğü için ignore edilmemiş: ayrıca bakılmalı.)
+- `01_secim\docs\figures\D01_*.png` (6) ve `D02_*.png` (7), 13 ikili dosya, toplam 1 375 862 B, en büyüğü 148 253 B. `.gitignore` bunları takipte tutmaya ayırmış (`!**/docs/figures/D[0-9][0-9]_p*.png`) ama ikili olduğu için kurala göre ayrı onaya bırakıldı; mühendis "crop'ları da ekle" derse aşamaya alınır.
+Gizli/kimlik dosyası (.env, token, sertifika), docs\ref\*.pdf, __pycache__, *.tmp, run.log, result*.json aşamada yok (index adları taranıp doğrulandı: "none"); aşamalı fark metninde credential sözcüğü (client_secret, api_key, password) yok.
+
+**Adım 3 - aşamaya alınan:** `git diff --cached --name-only | wc -l` = **71** dosya; `git diff --cached --stat` son satır: `71 files changed, 4183 insertions(+), 60 deletions(-)`. En büyükleri: docs\sim\circuits.py +740, plotkit.py +491, symbols.py +396, test_plotkit.py +342, pin_map.py +284, test_circuits_hand.py +254. Klasör yolu yalnız docs\sim\ ve tools\tests\ için kullanıldı (ikisinde de ignored/beklenmedik dosya yok: pycache ignored; tüm fixture dosyaları .md/.cir/.py/.sub).
+
+**Adım 4 - DURDUM, "commit go" bekleniyor.** Commit mesajı (tam metin):
+
+Konu: `Add document library intake, check-pdf fixes, circuit and result plot tooling`
+Gövde: `T019-T031: D01/D02 intake with registry and variant gate; check_pdf back-links, doc-vs-code fixes and tests; PDF path reporting rule; pin map and three-name figures; circuits.py/symbols.py classic schematic drawer; plotkit.py result plots with legend, palette and dashed-line rule; ticket-not-in-chat rule.`
+(+ sistem istemindeki ortak yazar satırı: `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>`; ticket tam bir mesaj istiyor, bu satır eklenecek mi mühendis "commit go" ile birlikte onaylasın; onaylanmazsa satır eklenmeden aynen yukarıdaki metinle commit edilir.)
+
+Bilet bilinçli olarak ÇALIŞIYOR durumunda bırakıldı (adım 5-6 go bekliyor); BİTTİ, push sonrası yazılır. Bu dosya (T032) aşamaya alınan haliyle commit'e girecek.
+
+OPEN: (1) 01_secim\out\passA\ ve sim\models\ ve D01/D02 crop PNG'leri commit dışı; mühendis karar verir (crop'lar için ayrı "go", out\* kural gereği hiçbir zaman, models için T020/.gitignore kontrolü). (2) Co-Authored-By satırı kararı. (3) Commit ve push go'ları bekleniyor.

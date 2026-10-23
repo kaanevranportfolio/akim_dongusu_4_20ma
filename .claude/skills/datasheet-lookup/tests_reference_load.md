@@ -1,3 +1,5 @@
+> **ÇALIŞTIRILAMAZ: D01/D02 ile yeniden yazılana kadar.** Aşağıdaki 8 soru eski dosya adlarına (DS_stm32f103c8.pdf, ads1115.pdf vb.) bağlıdır; bu kütüphanede yoktur ve kapı (doc_registry.json) kayıtsız belgeyi reddeder. Referans yanıt olarak kullanma (00_coordination/T024 adım 6).
+
 ﻿# datasheet-lookup test set (programmable_electronic_load)
 
 Durum: ilk koşu 2026-10-16 (görev T002). "Found" sütunu betiğin döndürdüğüdür; mühendis her yanıtı PDF'te bir kez doğrulayınca "Engineer" sütununa OK veya düzeltilmiş değer yazar, doğrulananlar beklenen değer olur. Betikler değişince 8 soru yeniden yanıtlanır ve beklenen değerlerle karşılaştırılır. PDF'ler `docs\ref\`; sayfa her zaman PDF sayfasıdır. Kırpılmış görüntüler `docs\ref\_crops\` (gitignored).

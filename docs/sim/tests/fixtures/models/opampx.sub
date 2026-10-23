@@ -1,0 +1,5 @@
+* fixture model, not a vendor model
+.subckt OPAMPX inp inn vcc vee out
+Rin inp inn 1G
+Eout out vee value={1e5*(v(inp)-v(inn))}
+.ends

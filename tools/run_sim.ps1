@@ -18,7 +18,9 @@
 #             .qraw is deleted ONLY if the whole batch was clean (no failed / missing model / bloat / numerical-canary failure),
 #             at least one -Analyze script ran and every analyzer exited 0, and -KeepRaw is not given; otherwise the raw files
 #             stay and a line says why. *.tmp and big *.csv still follow the 5 MB rule. Use it with an -Analyze that writes
-#             the small result files first, e.g. -Analyze C:\eda\tools\qraw_export.py (sim\out\<name>.csv).
+#             the small result files first, e.g. -Analyze <pipeline>\tools\qraw_export.py (sim\out\<name>.csv).
+# Canary: this script does not run canary_rc.cir first or on its own; it is simulated like any other .cir (default batch: file-name
+#             order; named inputs: only if named). The script only checks the canary_err_pct_* .meas lines of the runs it did.
 #   -Analyze scripts get two environment variables: SIM_RAW_LIST (the .qraw paths of this batch, separated by ';') and
 #             SIM_OUT_DIR (the sim\out folder).
 # Exit codes: 0 ok | 1 simulation/QPOST/analysis error, or -SimDir missing / not a folder | 3 MISSING MODEL (Model Pre-loading Doctrine:

@@ -2,7 +2,8 @@
 
   pdf_crop.py <pdf> <page> x0 y0 x1 y1 [--dpi 150] [--out DIR]
 
-Coordinates are fractions 0..1 of the page width/height (origin top-left).
+Coordinates are fractions 0..1 of the page width/height (origin top-left). --dpi must be 100..200.
+A box covering >= 95% of the page (e.g. 0 0 1 1) is rejected (non-zero exit); there is no override flag.
 
   pdf_crop.py <pdf> <page> --around "<label text>" [--pad-up 0.04] [--pad-down 0.10] [--dpi 150]
 
@@ -61,6 +62,8 @@ def main():
     else:
         clip = pymupdf.Rect(r.x0 + a.x0 * r.width, r.y0 + a.y0 * r.height,
                             r.x0 + a.x1 * r.width, r.y0 + a.y1 * r.height)
+    if clip.get_area() >= 0.95 * r.get_area():
+        raise SystemExit("crop covers >= 95% of the page: full-page images are not allowed; crop the figure or table only")
     pix = pg.get_pixmap(dpi=a.dpi, clip=clip)
     out = pathlib.Path(a.out)
     out.mkdir(parents=True, exist_ok=True)

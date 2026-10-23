@@ -1,0 +1,9 @@
+* fixture for the probe forms V(a,b) and I(X1:pin); not a real design
+.subckt BUF in out
+Rb in out 1
+.ends
+V1 A 0 5
+XU1 A B BUF
+R1 B 0 1k
+.save V(A,B) I(XU1:out) V(B)
+.end

@@ -1,0 +1,13 @@
+* T015 Part B (3): OPA2192 (model OPAx192) unity-gain buffer step response (slew rate), VCC = 12 V, VEE = 0, RL = 10 kohm to ground. Same topology and levels as sim\diag_st\st_buffer_step.cir (2 V -> 8 V -> 2 V); only the model and the time scale changed (the step is 20 times faster than the 0.6 V/us of the ST model).
+* Model node order: .SUBCKT OPAx192 IN+ IN- VCC VEE OUT  =>  instance line: XU <IN+> <IN-> <V+> <V-> <OUT> OPAx192.
+* Input steps 2 V -> 8 V at 2 us and 8 V -> 2 V at 12 us with 100 ns edges (fastest edge 100 ns, 60 V/us, faster than the expected slew rate).
+* Max step: 2 ns (1/50 of the fastest edge; the 10-90 % part of the output step lasts about 0.24 us at 20 V/us, so it is resolved by about 120 points).
+* PREDICTION [A]: slew rate near 20 V/us (D21 p.9, G = 1, 10 V step, VS = +-18 V); at 12 V total supply the model may differ. Settling to 0.01 % in about 1.4 us for a 10 V step (D21 p.9, VS = +-18 V).
+.include ..\models\OPAx192.LIB
+VCC VCC 0 12
+VIN INP 0 PWL(0 2 2u 2 2.1u 8 12u 8 12.1u 2 22u 2)
+XU1 INP OUT VCC 0 OUT OPAx192
+RL OUT 0 10k
+.tran 0 22u 0 2n
+.save V(OUT) V(INP)
+.end

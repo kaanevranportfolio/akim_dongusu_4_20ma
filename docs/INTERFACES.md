@@ -30,3 +30,10 @@ K1..K12 için: kriter, köşe, ölçülen değer, sınır, PASS/FAIL, testbench,
 
 ## 9. KiCad çıktıları (03_kicad\)
 ERC/DRC JSON ve özetleri `docs\review\`, `docs\FOOTPRINTS.md`, `docs\NETS.md`, kontrol PDF'leri. Fabrikasyon çıktıları yalnız mühendis go'sundan sonra.
+
+## 10. Pin eşleme tablosu (modülün FACTS.md "Pin eşleme" bölümü)
+Simülasyon devre şekilleri her terminal için üç ad gösterir (kök Figures kural 2): datasheet pini (DS), SPICE model düğümü (SP), testbench net (TB). DS ve SP bu tablodan gelir; TB testbench .cir dosyasından okunur. Başlık satırı tam olarak şudur, parça başına terminal başına bir satır:
+
+`Part | Doc (D<nn>) | Page | Pkg pin no | Datasheet pin name | Model file | .SUBCKT node position | SPICE node name | Label | Note`
+
+Kurallar: (1) Datasheet sütunları (Doc, Page, Pkg pin no, Datasheet pin name) yalnız belgenin kendisinden gelir, etiket [R]; mühendis crop ile karşılaştırınca [V]. (2) SPICE sütunları (Model file, .SUBCKT node position 1 tabanlı, SPICE node name) model dosyasının .SUBCKT satırı okunarak yazılır, etiket [R]; netlist koşusu doğrularsa [M]. Etiket sütunu: [V], [R], [A] veya [M]. (3) Bilinmeyen hücre "?" yazılır, tahmin edilmez; şekilde taralı kutu ve altbilgide "UNMAPPED TERMINALS: n" olur. (4) Testbench'te olup tabloda olmayan terminal şekil üretiminde WARNING satırıdır. (5) Pin sırası ile .SUBCKT sırası farklı olabilir; bu hata değildir, şeklin göstermek istediği budur. (6) Bölüm yalnız tabloyu içerir; araç (docs\sim\pin_map.py) yalnız bu bölümün ilk tablosunu okur, başlık sütunları farklıysa hata verir. Üretici: docs\sim\pin_map.py `--pin-map <modül>\FACTS.md`.

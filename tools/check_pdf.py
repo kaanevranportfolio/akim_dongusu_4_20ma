@@ -1,15 +1,16 @@
 """check_pdf.py: turn a markdown check table into a PDF for the engineer, with a clickable Crop column.
 
 Usage (from the project root):
-    python docs\\check_pdf.py docs\\FOOTPRINTS.md                 -> docs\\FOOTPRINTS.pdf
-    python docs\\check_pdf.py docs\\review\\erc_findings.md --out docs\\review\\erc_findings.pdf
-    python docs\\check_pdf.py <md> --crops handoff\\figures docs\\figures docs\\review\\crops
+    python ..\\tools\\check_pdf.py docs\\FOOTPRINTS.md            -> docs\\FOOTPRINTS.pdf
+    python ..\\tools\\check_pdf.py docs\\review\\erc_findings.md --out docs\\review\\erc_findings.pdf
+    python ..\\tools\\check_pdf.py <md> --crops docs\\ref\\_crops docs\\figures docs\\review\\crops
 
 Rules (kit CLAUDE.md "Human reading" and "PDF crop link"):
 - The md file stays the source; the PDF is generated output and is never edited by hand.
 - Every table row that names a crop PNG anywhere in its cells (datasheet crop D<nn>_p<page>_<topic>.png, or a kicad-cli
   schematic/board export PNG) gets a "Crop" cell: crop name + PDF page number, an internal link to that page.
-- Each distinct crop is placed once on its own page (after the tables), with a caption and a "back to table" link.
+- Each distinct crop is placed once on its own page (after the tables), with a caption and "back to table" links
+  (one per table row that cites the crop, up to 12; each jumps to that row).
 - A named crop that is not found in any crops folder is printed on the page and in the script output (no failure).
 - Same inputs -> same output (reportlab invariant mode: no creation date).
 Needs: reportlab (pip install reportlab). Arial is used when present (Windows), else Helvetica.
@@ -122,6 +123,7 @@ def main():
     # table pages are counted by a first build; crop page numbers = table pages + 1 + index
     def build(table_pages):
         story, page_of = [], {n: table_pages + 1 + k for k, n in enumerate(order)}
+        uses, tno = {}, 0  # crop name -> [(row anchor, label)] for the "back to table" links
         title = next((b[2] for b in blocks if b[0] == "h"), src.stem)
         story.append(Paragraph(esc(title), S_TITLE))
         story.append(Paragraph(f"Generated from {esc(src.name)}; edit the md, regenerate the PDF. Crops: {len(order)}.", S_CAP))
@@ -137,8 +139,10 @@ def main():
                 story.append(Spacer(1, 2))
             else:
                 head, rows = b[1], b[2]
+                tno += 1
                 data = [[Paragraph(esc(h), S_HEAD) for h in head] + [Paragraph("Crop", S_HEAD)]]
-                for r in rows:
+                for ri, r in enumerate(rows, 1):
+                    rid = f"row_{tno}_{ri}"
                     names = []
                     for n in CROP_RE.findall(" ".join(r)):
                         if n not in names:
@@ -149,7 +153,12 @@ def main():
                             links.append(f'<link href="#{anchor(n)}" color="#1d4ed8"><u>{esc(n)}</u></link> (p.{page_of[n]})')
                         else:
                             links.append(f"{esc(n)} (MISSING)")
-                    data.append([Paragraph(md(c), S_CELL) for c in r] + [Paragraph("<br/>".join(links) or "-", S_CELL)])
+                    for n in names:
+                        uses.setdefault(n, []).append((rid, f"T{tno} r{ri}: {r[0][:50]}"))
+                    cells = [Paragraph(md(c), S_CELL) for c in r]
+                    if cells:
+                        cells[0] = Paragraph(f'<a name="{rid}"/>' + md(r[0]), S_CELL)
+                    data.append(cells + [Paragraph("<br/>".join(links) or "-", S_CELL)])
                 t = Table(data, repeatRows=1)
                 t.setStyle(TableStyle([("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1e293b")),
                                        ("GRID", (0, 0), (-1, -1), 0.4, colors.HexColor("#94a3b8")),
@@ -160,15 +169,25 @@ def main():
         for k, n in enumerate(order):
             story.append(PageBreak())
             p = find_crop(n, dirs)
-            story.append(Paragraph(f'<a name="{anchor(n)}"/>{esc(n)}', S_H2))
+            use = uses.get(n, [])
+            back = " &nbsp;|&nbsp; ".join(f'<link href="#{rid}" color="#1d4ed8"><u>{esc(lbl)}</u></link>'
+                                         for rid, lbl in use[:12])
+            if len(use) > 12:
+                back += f" &nbsp;|&nbsp; (+{len(use) - 12} more rows)"
+            head = [Paragraph(f'<a name="{anchor(n)}"/>{esc(n)}', S_H2),
+                    Paragraph("&#8592; Tabloya dön: " + (back or "-"), S_BODY)]
+            story.extend(head)
             if p is None:
                 story.append(Paragraph(f"MISSING: {esc(n)} not found in {', '.join(str(d.relative_to(ROOT)) for d in dirs)}", S_MISS))
                 continue
             from reportlab.lib.utils import ImageReader
             iw, ih = ImageReader(str(p)).getSize()
-            sc = min(FRAME_W / iw, (FRAME_H - 40) / ih)
+            cap = Paragraph(f"Source file: {esc(str(p.relative_to(ROOT)))}", S_CAP)
+            # reserve the real height of heading, back links and caption (the link line wraps with many rows)
+            used = sum(x.wrap(FRAME_W, FRAME_H)[1] + x.getSpaceBefore() + x.getSpaceAfter() for x in head + [cap]) + 12
+            sc = min(FRAME_W / iw, (FRAME_H - used) / ih)
             story.append(Image(str(p), width=iw * sc, height=ih * sc))
-            story.append(Paragraph(f"Source file: {esc(str(p.relative_to(ROOT)))}", S_CAP))
+            story.append(cap)
         return story
 
     def run(table_pages):

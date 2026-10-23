@@ -1,0 +1,17 @@
+* fixture: 4-20 mA-like loop for circuits.py tests (not a real design; no value here is [V])
+.include models/opampx.sub
+.param rload=250
+V_LOOP SUP_N 0 24
+VREF REF_N 0 2.5
+XU1 REF_N SENSE_N SUP_N 0 GATE_N OPAMPX
+RB GATE_N BASE_N 1k
+Q1 LOOP_P BASE_N SENSE_N QPASS
+R_LOAD SUP_N LOOP_P {rload}
+R_SENSE SENSE_N 0 100
+C_FILT SENSE_N 0 100n
+.model QPASS NPN
+.tran 0 10m 0 10u
+.step param rload list 100 250
+.meas tran i_end FIND I(R_SENSE) AT=9m
+.save V(SENSE_N) I(R_SENSE)
+.end

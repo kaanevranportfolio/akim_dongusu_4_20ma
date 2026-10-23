@@ -74,8 +74,11 @@ A defect found later flows back as a ticket to the owning module (UPSTREAM.md in
   model SHA256 -> ticket).
 - Simulation figure rules: (1) every simulation is reported with two figures: the circuit (what is simulated and how it is wired:
   source values, load, measurement nodes, model node order, assumptions [A]), generated from the testbench netlist by a script that
-  checks every netlist element is drawn, and the result plot; without the circuit a result counts as not shown. (2) pin names as
-  printed in the document; the model subcircuit node order is shown too. (3) measurement nodes and every curve labelled with
+  checks every netlist element is drawn (`python docs\sim\circuits.py <tb>.cir --out <dir> --layout docs\sim\<tb>\circuit_layout.py [--pin-map <module>\FACTS.md]`; the layout script is hand-written with the symbols of docs\sim\symbols.py, `--draft` writes a starting file, the automatic layout is a draft only; probes are red boxes named like the result traces), and the result plot (`docs\sim\plotkit.py` via a copy of `docs\simesult_template.py` as `docs\sim\<tb>esult.py`: legend entries = exactly the `.save` names that are the red probe boxes of circuit.png, no red boxes in result plots; result plot: colour in palette order (blue, red, amber, green, purple, black), line style solid then dashed, alternating, the dashed trace drawn on top so coincident traces both stay visible; dashed shapes in circuit figures are built from explicit segments (the PNG renderer ignores stroke-dasharray); limits cite SPEC K<nn> or [A], measurements marked [M]); without the circuit a result counts as not shown. (2) pin names as
+  printed in the document; the model subcircuit node order is shown too. Every terminal shows three boxes with a legend: DS (datasheet pin
+  no + name + D<nn> p.<n>, solid rectangle), SP (SPICE model node, .SUBCKT position + name, dashed rounded), TB (testbench net, hexagon);
+  prefix and shape carry the kind, colour is only a help; an unknown cell is "?" (hatched box, footer "UNMAPPED TERMINALS: n"), never
+  guessed; data from the FACTS.md "Pin eşleme" table (docs\INTERFACES.md section 10), generator option --pin-map. (3) measurement nodes and every curve labelled with
   those names. (4) axes with units; conditions (Vgs, Vds, temperature, sources) in the title. (5) footer: testbench file, model
   file (SHA256), result label [C]. (6) a result is not used as [V] or as a decision before the engineer has read and approved it.
 - Procedure: the figures skill.
@@ -100,6 +103,8 @@ A defect found later flows back as a ticket to the owning module (UPSTREAM.md in
 - Planner (claude.ai) reads and writes only md files and tickets; anything that needs a PDF, a tool run, a script or a figure
   goes to VS Code as a ticket (vscode-ticket skill). One writer at a time: the planner asks whether VS Code is idle.
 - State lives only in files; whatever must survive the session is written before it ends.
+- Planner chats never paste a ticket file (docs\tasks\Tnnn-*.md) into the conversation and never write it with Write under /mnt/user-data/outputs/ (that echoes the full text and a file card). The ticket is written in the scratchpad, copied into the module's docs\tasks with device_commit_files, and the chat gets only the file name, a 2-3 line summary and the one-line command.
+- Every session that gives the engineer a check table also puts this line in its last message: `kontrol PDF'i hazır: <module-relative path>.pdf, <N> sayfa, <M> crop, <K> eksik`; if K is not 0 the PDF is not delivered. Command: `python ..\tools\check_pdf.py docs\<table>.md`.
 
 ## Rules
 - A rule is added only after a repeated mistake and carries its incident (docs\RULE_LEDGER.md, module docs\lessons.md).

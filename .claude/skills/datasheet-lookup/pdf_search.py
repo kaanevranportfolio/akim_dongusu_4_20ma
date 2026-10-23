@@ -1,4 +1,5 @@
-"""Page-marked text search/read for a PDF (PyMuPDF). Output is capped at 60 lines.
+"""Page-marked text search/read for a PDF (PyMuPDF). Output is capped at 60 result lines plus one truncation note
+(the GATE and REPORT lines are not counted).
 
   pdf_search.py <pdf> "<term>" [--context N]     search, hits with page markers; tries the
                                                  document's synonyms (VDD/VCC/supply voltage...)
@@ -84,8 +85,9 @@ def main():
         out = ["no match after trying: " + ", ".join(tried) if tried else "no match"]
     if len(out) > MAX_LINES:
         extra = len(out) - MAX_LINES
-        out = out[:MAX_LINES] + [f"... {extra} more lines cut; narrow the term or use --page"]
+        out = out[:MAX_LINES] + [f"... {extra} more lines cut; narrow the term or use --page"]  # 60 result lines + 1 note
     print("\n".join(out))
+    report(lines=min(len(out), MAX_LINES), tables=0, images=0)
 
 
 if __name__ == "__main__":
